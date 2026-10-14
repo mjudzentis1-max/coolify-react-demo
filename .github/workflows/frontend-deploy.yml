@@ -29,7 +29,7 @@ jobs:
       - name: Trigger frontend deployment
         env:
           COOLIFY_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
-          APPLICATION_UUID: ${{ secrets.COOLIFY_FRONTEND_UUID }}
+          APPLICATION_UUID: ${{ vars.FRONTEND_APPLICATION_UUID }}
         run: |
           test -n "$COOLIFY_TOKEN"
           test -n "$APPLICATION_UUID"
