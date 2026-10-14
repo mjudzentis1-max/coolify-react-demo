@@ -8,19 +8,44 @@ Kūrybinės skaitmeninės studijos landing puslapis. Pagrindinis puslapio kompon
 - `npm run build` – produkcinis paketas
 - `npm run lint` – kodo patikra
 
-## Pradinis Vite aprašymas
+## API
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Spring Boot API yra `backend/` kataloge. Įdiegtas testinis endpointas:
 
-Currently, two official plugins are available:
+```text
+GET /api/health
+```
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Jis grąžina `status`, `service` ir užklausos laiką. Paleidus konteinerį, patikrinkite:
 
-## React Compiler
+```bash
+curl http://localhost:8080/api/health
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Konteineris vienu metu pateikia React puslapį ir API per `8080` prievadą. Coolify perskaitys šakninį `Dockerfile`.
 
-## Expanding the ESLint configuration
+## PostgreSQL per Coolify
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Prie aplikacijos Coolify aplinkos kintamuosiuose pridėkite prisijungimo duomenis iš esamos PostgreSQL paslaugos:
+
+```text
+SPRING_PROFILES_ACTIVE=prod
+SPRING_DATASOURCE_URL=jdbc:postgresql://<postgres-host>:5432/<database>
+SPRING_DATASOURCE_USERNAME=<username>
+SPRING_DATASOURCE_PASSWORD=<password>
+FORMA_API_KEY=<ilgas-atsitiktinis-raktas>
+```
+
+Vietiniam darbui nukopijuokite `.env.dev.example` į `.env.dev` ir įrašykite savo PostgreSQL duomenis. Produkcijai naudokite `.env.prod.example` kaip kintamųjų sąrašą Coolify aplinkoje. Abu tikrieji `.env` failai yra ignoruojami Git.
+
+Paleidžiant aplikaciją Flyway automatiškai sukuria `inquiries` lentelę. Duomenų API reikalauja `X-Api-Key` antraštės:
+
+```bash
+curl --request POST https://jusu-domenas.lt/api/inquiries \
+  --header "X-Api-Key: <FORMA_API_KEY>" \
+  --header "Content-Type: application/json" \
+  --data '{"name":"Jonas","email":"jonas@example.com","message":"Sveiki"}'
+
+curl https://jusu-domenas.lt/api/inquiries \
+  --header "X-Api-Key: <FORMA_API_KEY>"
+```

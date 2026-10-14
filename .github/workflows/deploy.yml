@@ -1,5 +1,5 @@
 
-name: Deploy React to Coolify
+name: Deploy Forma to Coolify
 
 on:
   push:
