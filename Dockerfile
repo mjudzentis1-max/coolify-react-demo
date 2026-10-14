@@ -1,10 +1,10 @@
 FROM node:22-alpine AS frontend-build
 
 WORKDIR /app
-COPY package.json package-lock.json ./
+COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci
-COPY index.html vite.config.js ./
-COPY src ./src
+COPY frontend/index.html frontend/vite.config.js ./
+COPY frontend/src ./src
 RUN npm run build
 
 FROM maven:3.9.9-eclipse-temurin-21 AS backend-build
