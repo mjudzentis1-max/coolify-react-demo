@@ -53,3 +53,4 @@ jobs:
             --header "Authorization: Bearer ${COOLIFY_TOKEN}" \
             --header "Accept: application/json" \
             "https://coolifyserver.taile64c6b.ts.net/api/v1/deploy?uuid=nrfa3iwuggbrxqlafzkyjx3q"
+
