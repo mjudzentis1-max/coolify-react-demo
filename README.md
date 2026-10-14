@@ -22,7 +22,7 @@ Jis grąžina `status`, `service` ir užklausos laiką. Paleidus konteinerį, pa
 curl http://localhost:8080/api/health
 ```
 
-Konteineris vienu metu pateikia React puslapį ir API per `8080` prievadą. Coolify perskaitys šakninį `Dockerfile`.
+Frontend ir backend diegiami kaip dvi atskiros Coolify aplikacijos.
 
 ## PostgreSQL per Coolify
 
@@ -30,13 +30,19 @@ Prie aplikacijos Coolify aplinkos kintamuosiuose pridėkite prisijungimo duomeni
 
 ```text
 SPRING_PROFILES_ACTIVE=prod
+RAILPACK_JDK_VERSION=21
+RAILPACK_START_CMD=java -jar target/forma-api-0.0.1-SNAPSHOT.jar
 SPRING_DATASOURCE_URL=jdbc:postgresql://<postgres-host>:5432/<database>
 SPRING_DATASOURCE_USERNAME=<username>
 SPRING_DATASOURCE_PASSWORD=<password>
 FORMA_API_KEY=<ilgas-atsitiktinis-raktas>
 ```
 
-Vietiniam darbui nukopijuokite `backend/.env.dev.example` į `backend/.env.dev` ir įrašykite savo PostgreSQL duomenis. Produkcijai naudokite `backend/.env.prod.example` kaip kintamųjų sąrašą Coolify aplinkoje. Abu tikrieji `.env` failai yra ignoruojami Git.
+`backend/.env.dev.example` nenurodo Windows PostgreSQL ir reikalauja atskiro vystymo PostgreSQL hosto. Produkcijai naudokite `backend/.env.prod.example` kaip kintamųjų sąrašą Coolify aplinkoje. Abu tikrieji `.env` failai yra ignoruojami Git.
+
+Coolify backend aplikacijai nustatykite `backend` kaip Base Directory. Railpack aptiks `pom.xml`, o `RAILPACK_START_CMD` paleis Spring Boot per `8080` prievadą. Frontend aplikacijai nustatykite `frontend` kaip Base Directory ir publikuokite Vite `dist/` katalogą.
+
+GitHub Actions naudoja du atskirus Coolify UUID: `COOLIFY_FRONTEND_UUID` ir `COOLIFY_BACKEND_UUID`.
 
 Paleidžiant aplikaciją Flyway automatiškai sukuria `inquiries` lentelę. Duomenų API reikalauja `X-Api-Key` antraštės:
 

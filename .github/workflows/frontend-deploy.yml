@@ -1,0 +1,40 @@
+name: Deploy frontend to Coolify
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - frontend/**
+      - .github/workflows/frontend-deploy.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: coolify-frontend-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: tailscale/github-action@v4
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+
+      - name: Trigger frontend deployment
+        env:
+          COOLIFY_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+          APPLICATION_UUID: ${{ secrets.COOLIFY_FRONTEND_UUID }}
+        run: |
+          test -n "$COOLIFY_TOKEN"
+          test -n "$APPLICATION_UUID"
+          curl --fail-with-body --show-error \
+            --request POST \
+            --header "Authorization: Bearer ${COOLIFY_TOKEN}" \
+            --header "Accept: application/json" \
+            "https://coolifyserver.taile64c6b.ts.net/api/v1/deploy?uuid=${APPLICATION_UUID}"

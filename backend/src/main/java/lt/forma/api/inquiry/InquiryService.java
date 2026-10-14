@@ -4,6 +4,8 @@ import java.time.Instant;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
+
+
 @Service
 class InquiryService {
     private final InquiryRepository inquiryRepository;

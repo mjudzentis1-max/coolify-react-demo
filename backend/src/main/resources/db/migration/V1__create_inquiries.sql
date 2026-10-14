@@ -7,3 +7,4 @@ CREATE TABLE inquiries (
 );
 
 CREATE INDEX inquiries_created_at_idx ON inquiries (created_at DESC);
+
