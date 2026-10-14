@@ -17,8 +17,6 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-
     steps:
       - name: Connect to Tailscale
         uses: tailscale/github-action@v4
@@ -27,21 +25,10 @@ jobs:
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:ci
 
-      - name: Diagnose Tailscale connection
+      - name: Check Coolify connectivity
         run: |
-          echo "=== Tailscale devices ==="
-          tailscale status
-
-          echo "=== Ping Coolify server ==="
-          tailscale ping --c 3 100.109.127.122 || true
-
-          echo "=== DNS ==="
-          getent ahostsv4 coolifyserver.taile64c6b.ts.net || true
-
-          echo "=== Coolify HTTPS ==="
-          curl -4 --verbose \
-            --connect-timeout 10 \
-            --max-time 20 \
+          curl --fail --show-error \
+            --retry 5 --retry-delay 3 \
             https://coolifyserver.taile64c6b.ts.net/api/v1/health
 
       - name: Trigger Coolify deployment
@@ -49,8 +36,6 @@ jobs:
           COOLIFY_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
         run: |
           curl --fail-with-body --show-error \
-            --connect-timeout 10 \
-            --max-time 30 \
             --request POST \
             --header "Authorization: Bearer ${COOLIFY_TOKEN}" \
             --header "Accept: application/json" \
