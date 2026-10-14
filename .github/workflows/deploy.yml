@@ -17,6 +17,8 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+
     steps:
       - name: Connect to Tailscale
         uses: tailscale/github-action@v4
@@ -25,17 +27,28 @@ jobs:
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:ci
 
-      - name: Check Coolify connectivity
+      - name: Check Coolify connection
         run: |
+          tailscale status
           curl --fail --show-error \
-            --retry 5 --retry-delay 3 \
+            --connect-timeout 10 \
+            --max-time 30 \
             https://coolifyserver.taile64c6b.ts.net/api/v1/health
 
       - name: Trigger Coolify deployment
         env:
           COOLIFY_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
         run: |
+          if [ -z "$COOLIFY_TOKEN" ]; then
+            echo "::error::COOLIFY_API_TOKEN is missing"
+            exit 1
+          fi
+
+          echo "Coolify API token is present"
+
           curl --fail-with-body --show-error \
+            --connect-timeout 10 \
+            --max-time 30 \
             --request POST \
             --header "Authorization: Bearer ${COOLIFY_TOKEN}" \
             --header "Accept: application/json" \
