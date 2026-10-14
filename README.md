@@ -1,4 +1,14 @@
-# React + Vite
+# Forma
+
+Kūrybinės skaitmeninės studijos landing puslapis. Pagrindinis puslapio komponentas yra `src/Landing.jsx`, jo stiliai – `src/Landing.css`.
+
+## Komandos
+
+- `npm run dev` – vietinis kūrimo serveris
+- `npm run build` – produkcinis paketas
+- `npm run lint` – kodo patikra
+
+## Pradinis Vite aprašymas
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
